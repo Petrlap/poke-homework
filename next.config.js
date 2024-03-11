@@ -7,6 +7,7 @@ const nextConfig = {
     unoptimized: true,
     domains: ["raw.githubusercontent.com"],
   },
+  distDir: "out",
 };
 
 module.exports = nextConfig;
