@@ -1,14 +1,33 @@
 import Head from "next/head";
 import styles from "@/styles/Home.module.css";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 import Image from "next/image";
 
-export default function Home({ pokemons }) {
+export default function Home({}) {
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [pokemons, setPokemons] = useState([]);
   const handleClick = (pokemon) => {
     setSelectedPokemon(pokemon);
   };
+
+  useEffect(async () => {
+    const response = await axios.get(
+      "https://pokeapi.co/api/v2/pokemon?limit=10&offset=0"
+    );
+    const result = response.data.results;
+    const promises = result.map((elem) => axios.get(elem.url));
+    const responses = await Promise.all(promises);
+    const pokemons = responses.map((response) => ({
+      name: response.data.name,
+      photo: response.data.sprites.front_shiny,
+      moves: response.data.moves,
+      id: response.data.id,
+      height: response.data.height,
+      base_experience: response.data.base_experience,
+    }));
+    setPokemons(pokemons);
+  }, []);
 
   const memoizedPokemonList = useMemo(
     () => (
@@ -73,24 +92,4 @@ export default function Home({ pokemons }) {
       </main>
     </>
   );
-}
-
-export async function getStaticProps() {
-  const response = await axios.get(
-    "https://pokeapi.co/api/v2/pokemon?limit=10&offset=0"
-  );
-  const result = response.data.results;
-  const promises = result.map((elem) => axios.get(elem.url));
-  const responses = await Promise.all(promises);
-  const pokemons = responses.map((response) => ({
-    name: response.data.name,
-    photo: response.data.sprites.front_shiny,
-    moves: response.data.moves,
-    id: response.data.id,
-    height: response.data.height,
-    base_experience: response.data.base_experience,
-  }));
-  return {
-    props: { pokemons },
-  };
 }
