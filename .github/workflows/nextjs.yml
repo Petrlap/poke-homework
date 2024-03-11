@@ -2,8 +2,8 @@
 #
 # To get started with Next.js see: https://nextjs.org/docs/getting-started
 #
-name: Deploy Next.js site to Pages
-static_site_generator: next
+name: Deploy Next.js site to pages
+
 on:
   # Runs on pushes targeting the default branch
   push:
